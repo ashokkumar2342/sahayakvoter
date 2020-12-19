@@ -57,7 +57,7 @@ export class SearchVoter extends Component {
                  this.setState({ 
                 userdetails: temps
                 }) 
-                console.log(this.state.userdetails[0].name_e)
+                console.log(this.state.userdetails[1])
             }, 100);
            
             
@@ -70,24 +70,27 @@ export class SearchVoter extends Component {
       }   
      
     } 
-    dialCall = () => {
+    dialCall = (p_mobilenumber) => {
  
-        let phoneNumber = '';
-     
         if (Platform.OS === 'android') {
-          phoneNumber = 'tel:${7903436369}';
+          phoneNumber = 'tel:${'+p_mobilenumber+'}';
         }
         else {
-          phoneNumber = 'telprompt:${7903436369}';
+          phoneNumber = 'telprompt:${'+p_mobilenumber+'}';
         }
      
         Linking.openURL(phoneNumber);
-        // Linking.openURL(`sms:&addresses=7903436369&body=My sms text`);
+         
       };
-    sendWhatsapp = () => {
+
+      sendSMS = (p_mobilenumber) => {
+        Linking.openURL("sms:&addresses="+p_mobilenumber+"&body=My sms text");
+      };
+
+    sendWhatsapp = (p_mobilenumber) => {
  
     let msg = 'type something';
-    let phoneWithCountryCode = '917903436369';
+    let phoneWithCountryCode = '91'+p_mobilenumber;
 
     let mobile = Platform.OS == 'ios' ? phoneWithCountryCode : '+' + phoneWithCountryCode;
     if (mobile) {
@@ -129,9 +132,14 @@ export class SearchVoter extends Component {
            { 
             this.state.userdetails.map((itemValue,index) => { 
                return <View style={styles.textBox}>
-                <Text>Name : {itemValue.name_e}, father : {itemValue.name_e} , father : {itemValue.name_e} , father : {itemValue.name_e} , Mobile No : {itemValue.mobileno} 
-                <Icon name="whatsapp" size={30} color="#900" onPress={this.sendWhatsapp} style={{ marginLeft: 30 }}  /> 
-                <Icon name="phone" size={30} color="#900" onPress={this.dialCall} style={{ marginLeft: 30 }}  /> 
+                <Text>{itemValue.name_e}</Text>
+                <Text>{itemValue.father_name}</Text>
+                <Text>{itemValue.mobileno}</Text>
+                <Text> 
+                <Icon name="whatsapp" size={30} color="#900" onPress={this.sendWhatsapp(itemValue.mobileno)} style={{ marginLeft: 30 }}  /> 
+                   --
+                <Icon name="phone" size={30} color="#900" onPress={this.dialCall(itemValue.mobileno)} style={{ marginLeft: 30 }}  /> 
+                --<Icon name="sms" size={30} color="#900" onPress={this.sendSMS(itemValue.mobileno)} style={{ marginLeft: 30 }}  />
                 </Text>
                 
 

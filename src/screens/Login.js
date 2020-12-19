@@ -83,7 +83,7 @@ export class Login extends Component {
                     options: booth
                 })   
             }else{
-                alert("Only for Sahayak Configaure Data Maximum"+ sahayak_list[0].already_sahayak) 
+                alert("Maximum "+sahayak_list[0].already_sahayak+" Sahayak Allowed Plz contact your admin.") 
             }
               
           }   
@@ -97,6 +97,7 @@ export class Login extends Component {
      configureData = async ()=>{  
          try {
             const connection = await MySqlConnection.createConnection(config);
+            
             let boothdetails = await connection.executeQuery("SELECT * FROM booths WHERE id = '"+this.state.setSelectedValue+"' LIMIT 1"); 
            
             // let insert = await connection.executeQuery("INSERT INTO sahayak_list (app_user_id, mobile_no, d_code, b_code, v_code, booth_no) values (1, 1234567890, d1, b1, v1, b1)");
@@ -132,10 +133,20 @@ export class Login extends Component {
                             'CREATE INDEX  v_name ON voters(name_e ASC, father_name ASC)',
                             []
                           );
+                          txn.executeSql(
+                            'CREATE TABLE appuserdetail (boothno TEXT, mobileno TEXT)',
+                            []
+                          );
+
+                          txn.executeSql(
+                            "INSERT INTO appuserdetail (boothno, mobileno) VALUES ('"+boothdetails[0].booth_no+"','1234567890')",
+                            [],
+                          );
+
                           voters.map((itemValue,index) => {  
                             txn.executeSql(
                                 'INSERT INTO voters (name_e, father_name, age, wardno, booth_no, srno, epicno, mobileno, favour_status, vote_polled, parivaar_id, sah_sahayak_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)',
-                                [itemValue.name_e, itemValue.father_name, itemValue.age,itemValue.wardno,itemValue.booth_no,itemValue.srno,itemValue.epicno,itemValue.mobileno,itemValue.favour_status,itemValue.vote_polled,itemValue.parivaar_id,itemValue.sah_sahayak_id ],
+                                [itemValue.name_e, itemValue.fname_e, itemValue.age,itemValue.v_ward,itemValue.booth_no,itemValue.srno,itemValue.card_no,itemValue.mobile_no,0,0,0,0],
                                 (tx, results) => {
                                   console.log('Insert Results',results.rowsAffected);
                                   if(results.rowsAffected>0){
@@ -167,6 +178,8 @@ export class Login extends Component {
                     
                   });
                   
+                  let sahayak_insert = await connection.executeQuery(" call up_instal_sahayak("+this.state.userdetails.id+", '1234567890', '"+this.state.userdetails.d_code+"', '"+this.state.userdetails.b_code+"', '"+this.state.userdetails.v_code+"', '"+boothdetails[0].booth_no+"');");
+
                 
             }
             

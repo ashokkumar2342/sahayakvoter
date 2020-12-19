@@ -7,7 +7,13 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { NavigationContainer } from '@react-navigation/native';
 import { useNavigation } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-var db = openDatabase({ name: 'UserDatabase.db' });
+var db = openDatabase({ name: 'VoterDatabase.db' });
+let config = {
+  host:'65.0.152.5',
+  database:'admin_voter',
+  user:'admin_voter',
+  password:'admin_voter', 
+  };
 
 export class Dashboard extends Component {
     
@@ -24,10 +30,6 @@ export class Dashboard extends Component {
       booth:[],      
       options:[],
       setSelectedValue:'',
-      user_name:'Navya',
-      user_contact:'03219434203',
-      user_address:'Alhafeez',
-      input_user_id:8,
 		   }; 
   }
   
@@ -52,6 +54,47 @@ export class Dashboard extends Component {
        console.log('search')
         this.props.navigation.push('SearchVoter')
     }
+
+    uninstallvapp = async ()=>{
+      try {
+        const connection = await MySqlConnection.createConnection(config);
+        let userdetails = await connection.executeQuery("call up_uninstal_sahayak('1234567890');");   
+        
+        db.transaction(function(txn) {  
+          txn.executeSql(
+            'Drop Table voters',
+            [],
+          );
+          txn.executeSql(
+            'Drop Table booths',
+            [],
+          );
+          txn.executeSql(
+            'Drop Table parivaars',
+            [],
+          );
+          txn.executeSql(
+            'Drop Table sahshayaks',
+            [],
+          );
+          txn.executeSql(
+            'Drop Table appuserdetail',
+            [],
+          ); 
+    
+        });
+
+
+        alert("Success");
+
+        this.props.navigation.popToTop();
+      } catch (error) {
+        alert("Plz check your net Connection");
+      }
+      
+
+     
+    }
     
 	 
 	 
@@ -69,7 +112,7 @@ export class Dashboard extends Component {
                     </TouchableOpacity>
                     <TouchableOpacity activeOpacity = { .5 } onPress={ this.searchVoter }> 
                         <View style={styles.menuBox}>
-                            <Icon name="rocket" size={30} color="#900" /> 
+                            <Icon name="search" size={30} color="#900" /> 
                             <Text style={styles.info} onPress={() => this.searchVoter}>Search Voter</Text>
                         </View>
                     </TouchableOpacity>
@@ -95,6 +138,12 @@ export class Dashboard extends Component {
                         <View style={styles.menuBox}>
                             <Icon name="rocket" size={30} color="#900" /> 
                             <Text style={styles.info} onPress={() => this.goToProfile}>Profile</Text>
+                        </View>
+                    </TouchableOpacity>
+                    <TouchableOpacity activeOpacity = { .5 } onPress={ this.uninstallvapp }> 
+                        <View style={styles.menuBox}>
+                            <Icon name="rocket" size={30} color="#900" /> 
+                            <Text style={styles.info} onPress={() => this.uninstallvapp}>Uninstall</Text>
                         </View>
                     </TouchableOpacity>
                 </View> 
