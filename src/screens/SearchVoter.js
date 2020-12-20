@@ -140,10 +140,10 @@ export class SearchVoter extends Component {
                 <Text>{itemValue.father_name}</Text>
                 <Text>{itemValue.mobileno}</Text>
                 <Text> 
-                <Icon name="whatsapp" size={30} color="#900" onPress={ () => this.sendWhatsapp(itemValue.mobileno)} style={{ marginLeft: 30 }} /> 
+                <Icon name="whatsapp" size={30} color="#34eb4c" onPress={ () => this.sendWhatsapp(itemValue.mobileno)} style={{ marginLeft: 30 }} /> 
                    --
-                <Icon name="phone" size={30} color="#900" onPress={() => this.dialCall(itemValue.mobileno)} style={{ marginLeft: 30 }}  /> 
-                --<Icon name="sms" size={30} color="#900" onPress={() => this.sendSMS(itemValue.mobileno)} style={{ marginLeft: 30 }}  />
+                <Icon name="phone" size={30} color="#83eb34" onPress={() => this.dialCall(itemValue.mobileno)} style={{ marginLeft: 30 }}  /> 
+                --<Icon name="envelope" size={30} color="#d0eb34" onPress={() => this.sendSMS(itemValue.mobileno)} style={{ marginLeft: 30 }}  />
                 </Text>
                 
 
