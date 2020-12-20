@@ -47,6 +47,10 @@ export class Dashboard extends Component {
         setSelectedValue: class_id
         })
     } 
+    goToProfile = () =>
+    { 
+        this.props.navigation.push('Profile')
+    }
     searchVoter = () =>
     {
         

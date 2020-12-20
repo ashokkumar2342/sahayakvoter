@@ -5,6 +5,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import Login from './src/screens/Login';
 import { Dashboard } from './src/screens/Dashboard';
 import { SearchVoter } from './src/screens/SearchVoter';
+import { Profile } from './src/screens/Profile';
 
 
 function HomeScreen({ navigation }) { 
@@ -35,6 +36,7 @@ function DashboardStak() {
           
           headerLeft: () =>  null,
         }} name="Dashboard" component={Dashboard} />
+      <DashboardStack.Screen  name="Profile" component={Profile} />
       <DashboardStack.Screen  name="SearchVoter" component={SearchVoter} />
     </DashboardStack.Navigator>
   );

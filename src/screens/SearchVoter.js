@@ -69,9 +69,8 @@ export class SearchVoter extends Component {
           
       }   
      
-    } 
-    dialCall = (p_mobilenumber) => {
- 
+    };
+    dialCall = async (p_mobilenumber)=>{ 
         if (Platform.OS === 'android') {
           phoneNumber = 'tel:${'+p_mobilenumber+'}';
         }
@@ -83,31 +82,36 @@ export class SearchVoter extends Component {
          
       };
 
-      sendSMS = (p_mobilenumber) => {
-        Linking.openURL("sms:&addresses="+p_mobilenumber+"&body=My sms text");
-      };
+    sendSMS = async (p_mobilenumber)=>{
+      if (Platform.OS === 'android') {
+        phoneNumber = 'tel:${'+p_mobilenumber+'}';
+      }
+      else {
+        phoneNumber = 'telprompt:${'+p_mobilenumber+'}';
+      }
+      Linking.openURL("sms:&addresses="+p_mobilenumber+"&body=My sms text");  
+    };
 
-    sendWhatsapp = (p_mobilenumber) => {
- 
+    sendWhatsapp = async (p_mobilenumber)=>{ 
     let msg = 'type something';
     let phoneWithCountryCode = '91'+p_mobilenumber;
 
     let mobile = Platform.OS == 'ios' ? phoneWithCountryCode : '+' + phoneWithCountryCode;
-    if (mobile) {
-      if (msg) {
-        let url = 'whatsapp://send?text=' + msg + '&phone=' + mobile;
-        Linking.openURL(url).then((data) => {
-          console.log('WhatsApp Opened');
-        }).catch(() => {
-          alert('Make sure WhatsApp installed on your device');
-        });
+      if (mobile) {
+        if (msg) {
+          let url = 'whatsapp://send?text=' + msg + '&phone=' + mobile;
+          Linking.openURL(url).then((data) => {
+            console.log('WhatsApp Opened');
+          }).catch(() => {
+            alert('Make sure WhatsApp installed on your device');
+          });
+        } else {
+          alert('Please insert message to send');
+        }
       } else {
-        alert('Please insert message to send');
+        alert('Please insert mobile no');
       }
-    } else {
-      alert('Please insert mobile no');
-    }
-      };
+    };
 	 
   render() {
     return (
@@ -136,10 +140,10 @@ export class SearchVoter extends Component {
                 <Text>{itemValue.father_name}</Text>
                 <Text>{itemValue.mobileno}</Text>
                 <Text> 
-                <Icon name="whatsapp" size={30} color="#900" onPress={this.sendWhatsapp(itemValue.mobileno)} style={{ marginLeft: 30 }}  /> 
+                <Icon name="whatsapp" size={30} color="#900" onPress={ () => this.sendWhatsapp(itemValue.mobileno)} style={{ marginLeft: 30 }} /> 
                    --
-                <Icon name="phone" size={30} color="#900" onPress={this.dialCall(itemValue.mobileno)} style={{ marginLeft: 30 }}  /> 
-                --<Icon name="sms" size={30} color="#900" onPress={this.sendSMS(itemValue.mobileno)} style={{ marginLeft: 30 }}  />
+                <Icon name="phone" size={30} color="#900" onPress={() => this.dialCall(itemValue.mobileno)} style={{ marginLeft: 30 }}  /> 
+                --<Icon name="sms" size={30} color="#900" onPress={() => this.sendSMS(itemValue.mobileno)} style={{ marginLeft: 30 }}  />
                 </Text>
                 
 
@@ -174,7 +178,7 @@ const styles = StyleSheet.create({
   },
   textBox: { 
     width:350,
-    height:75,
+    height:100,
     backgroundColor:'white',
     borderRadius: 25,
     paddingHorizontal:16,
