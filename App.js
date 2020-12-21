@@ -6,6 +6,8 @@ import Login from './src/screens/Login';
 import { Dashboard } from './src/screens/Dashboard';
 import { SearchVoter } from './src/screens/SearchVoter';
 import { Profile } from './src/screens/Profile';
+import { NumberUpdate } from './src/screens/NumberUpdate';
+
 
 
 function HomeScreen({ navigation }) { 
@@ -32,12 +34,16 @@ const DashboardStack = createStackNavigator();
 function DashboardStak() {
   return (
     <DashboardStack.Navigator>
-      <DashboardStack.Screen options={{
-          
+      <DashboardStack.Screen options={{          
           headerLeft: () =>  null,
         }} name="Dashboard" component={Dashboard} />
       <DashboardStack.Screen  name="Profile" component={Profile} />
-      <DashboardStack.Screen  name="SearchVoter" component={SearchVoter} />
+      <DashboardStack.Screen  name="SearchVoter"  component={SearchVoter} options={{ 
+           title: 'Search Voter' ,
+        }} />
+      <DashboardStack.Screen  name="NumberUpdate"  component={NumberUpdate} options={{ 
+           title: 'Number Update' ,
+        }} />
     </DashboardStack.Navigator>
   );
 }

@@ -144,6 +144,7 @@ export class SearchVoter extends Component {
                    --
                 <Icon name="phone" size={30} color="#83eb34" onPress={() => this.dialCall(itemValue.mobileno)} style={{ marginLeft: 30 }}  /> 
                 --<Icon name="envelope" size={30} color="#d0eb34" onPress={() => this.sendSMS(itemValue.mobileno)} style={{ marginLeft: 30 }}  />
+                --<Icon name="edit" size={30} color="#d0eb34" onPress={() => this.props.navigation.navigate('NumberUpdate',{id:itemValue.id,mobileno:itemValue.mobileno})} style={{ marginLeft: 30 }}  />
                 </Text>
                 
 
