@@ -4,6 +4,8 @@ import android.app.Application;
 import android.content.Context;
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
+import com.learnium.RNDeviceInfo.RNDeviceInfo;
+import me.furtado.smsretriever.RNSmsRetrieverPackage;
 import com.reactlibrary.MySqlConnectionPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.reactlibrary.MySqlConnectionPackage;

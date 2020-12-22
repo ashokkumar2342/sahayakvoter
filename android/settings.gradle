@@ -1,4 +1,8 @@
 rootProject.name = 'voter'
+include ':react-native-device-info'
+project(':react-native-device-info').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-device-info/android')
+include ':react-native-sms-retriever'
+project(':react-native-sms-retriever').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-sms-retriever/android')
 include ':react-native-my-sql-connection'
 project(':react-native-my-sql-connection').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-my-sql-connection/android')
 include ':react-native-vector-icons'
