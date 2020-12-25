@@ -7,6 +7,8 @@ import { Dashboard } from './src/screens/Dashboard';
 import { SearchVoter } from './src/screens/SearchVoter';
 import { Profile } from './src/screens/Profile';
 import { NumberUpdate } from './src/screens/NumberUpdate';
+import { VotePoll } from './src/screens/VotePoll';
+import { FamilyMapping } from './src/screens/FamilyMapping';
 
 
 
@@ -44,6 +46,12 @@ function DashboardStak() {
       <DashboardStack.Screen  name="NumberUpdate"  component={NumberUpdate} options={{ 
            title: 'Number Update' ,
         }} />
+      <DashboardStack.Screen  name="VotePoll"  component={VotePoll} options={{ 
+           title: 'Vote Poll' ,
+        }} />
+        <DashboardStack.Screen  name="FamilyMapping"  component={FamilyMapping} options={{ 
+           title: 'Family Mapping' ,
+        }} />   
     </DashboardStack.Navigator>
   );
 }

@@ -19,16 +19,15 @@ export class SearchVoter extends Component {
 		this.state = { 
         loading: true, 
         userdetails:[],  
+        
          
 	}; 
   }
   
-  componentDidMount(){   
-     
+  componentDidMount(){ 
   } 
     onPhoneNumberPressed = async () => {
-    try {
-        console.log('d');
+    try { 
       const phoneNumber = await SmsRetriever.requestPhoneNumber();
       
       console.log(phoneNumber);
@@ -126,9 +125,14 @@ export class SearchVoter extends Component {
         alert('Please insert mobile no');
       }
     };
+
+  
+   
+     
 	 
-  render() {
+  render() { 
     return (
+        
       <View style={styles.container}>
             <TextInput style={styles.inputBox} 
               underlineColorAndroid='rgba(0,0,0,0)' 
@@ -155,7 +159,7 @@ export class SearchVoter extends Component {
                 <Text>{itemValue.mobileno}</Text>
                 <Text> 
                 <TouchableOpacity>
-                     <Icon name="whatsapp" size={30} color="#34eb4c" onPress={ () => this.sendWhatsapp(itemValue.mobileno)} style={{ marginLeft: 30 }} /> 
+                     <Icon name="whatsapp" size={30} color="#34eb4c" onPress={ () => this.sendWhatsapp(itemValue.mobileno)}/> 
                 
                 </TouchableOpacity>
                
@@ -167,12 +171,17 @@ export class SearchVoter extends Component {
                    </TouchableOpacity>
                  
                    <TouchableOpacity>
-                    <Icon name="edit" size={30} color="#d0eb34" onPress={() => this.props.navigation.navigate('NumberUpdate',{id:itemValue.id,mobileno:itemValue.mobileno})} style={{ marginLeft: 30 }}  />   
+                    <Icon name="edit" size={30} color="#326da8" onPress={() => this.props.navigation.navigate('NumberUpdate',{id:itemValue.id,mobileno:itemValue.mobileno})} style={{ marginLeft: 30 }}  />   
+                   </TouchableOpacity>
+                   {/* <TouchableOpacity>
+                    <Icon name="eye" size={30} color="#d0eb34"  onPress={() => this.onPhoneNumberPressed()}  style={{ marginLeft: 30 }} />   
+                   </TouchableOpacity> */}
+                   <TouchableOpacity>
+                    <Icon name="users" size={30} color="#32a89e"  onPress={() => this.props.navigation.navigate('FamilyMapping',{id:itemValue.id})}  style={{ marginLeft: 30 }} />   
                    </TouchableOpacity>
                    <TouchableOpacity>
-                    <Icon name="eye" size={30} color="#d0eb34"  onPress={() => this.onPhoneNumberPressed()}   />   
-                   </TouchableOpacity>
-                
+                    <Icon name="file" size={30} color="#32a89e"  onPress={() => this.props.navigation.navigate('VotePoll',{id:itemValue.id,vote_polled:itemValue.vote_polled,favour_status:itemValue.favour_status})}  style={{ marginLeft: 30 }} />   
+                   </TouchableOpacity> 
                 
                 </Text>
                 

@@ -7,9 +7,9 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack'; 
 import { openDatabase } from 'react-native-sqlite-storage';
 import Icon from 'react-native-vector-icons/FontAwesome'; 
-var db = openDatabase({ name: 'VoterDatabase.db' });
+var db = openDatabase({ name: 'VoterDatabase.db' }); 
 
-export class NumberUpdate extends Component {
+export class FamilyMapping extends Component {
     
 	constructor(props) {
 	    super(props);
@@ -23,7 +23,9 @@ export class NumberUpdate extends Component {
 	}; 
   }
   
-  componentDidMount(){ 
+  componentDidMount(){    
+      console.log(id)
+ 
   }
    
 	 
@@ -136,4 +138,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default NumberUpdate
+export default FamilyMapping
