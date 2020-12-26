@@ -12,13 +12,13 @@ var db = openDatabase({ name: 'VoterDatabase.db' });
 export class FamilyMapping extends Component {
     
 	constructor(props) {
-	    super(props);
-	    this.state = { text: 'Useless Placeholder' }; 
-		this.state = { 
-        loading: true, 
-        userdetails:[],  
-        id:props.route.params.id,  
-        mobile_no:props.route.params.mobileno,  
+    super(props);
+    this.state = { text: 'Useless Placeholder' }; 
+    this.state = { 
+      loading: true, 
+      parivaars:[],  
+      id:props.route.params.id,  
+      mobile_no:props.route.params.mobileno,  
          
 	}; 
   }
@@ -65,6 +65,48 @@ export class FamilyMapping extends Component {
       }   
      
     };
+
+	 showFamily = async ()=>{
+     const {mobile_no='',parivaar_name=''}=this.state  
+     var temps = []; 
+      try{
+          if (mobile_no !='' || parivaar_name !='') {
+            db.transaction(function(txn) {  
+                txn.executeSql(
+                  "SELECT * FROM parivaars",
+                  [],
+                  function(txt,res){  
+                      console.log('query Completed')
+                    var len = res.rows.length;
+                    var temp = [];
+                    if (len > 0) {
+                        for (let i = 0; i < len; i++) {
+                            temp.push(res.rows.item(i)); 
+                        } 
+                        temps =temp;   
+                    }else{
+                        alert('No record found');
+                    } 
+                  }
+                );  
+            });  
+            setTimeout(() => { 
+                 this.setState({ 
+                parivaars: temps
+                }) 
+                console.log(this.state.parivaars[1])
+            }, 100);
+           
+            
+          }else{
+              alert('Enter Details')
+          } 
+           
+      }catch(err){
+          
+      }  
+     
+    };
     
 	 
   render() {
@@ -90,7 +132,21 @@ export class FamilyMapping extends Component {
            <TouchableOpacity style={styles.button} >
              <Text style={styles.buttonText}  onPress={() => this.createFamily()}>Create Parivaar</Text>
            </TouchableOpacity>  
-           
+           <TouchableOpacity style={styles.button} >
+             <Text style={styles.buttonText}  onPress={() => this.showFamily()}>Show Parivaar</Text>
+           </TouchableOpacity>
+           <ScrollView>
+           { 
+            this.state.parivaars.map((itemValue,index) => { 
+               return <View style={styles.textBox}>
+                <Text>{itemValue.parivaar_name}</Text>
+                <Text>{itemValue.mobileno}</Text> 
+                </View>
+                
+            })
+            
+            }  
+            </ScrollView>
   		</View> 
           
 
@@ -116,7 +172,7 @@ const styles = StyleSheet.create({
   },
   textBox: { 
     width:350,
-    height:100,
+    height:50,
     backgroundColor:'white',
     borderRadius: 25,
     paddingHorizontal:16,
