@@ -66,6 +66,7 @@ export class NumberUpdate extends Component {
               placeholder="Enter Mobile No"
               placeholderTextColor = "#ffffff"
               selectionColor="#fff" 
+              keyboardType="numeric"
               value = {this.state.mobile_no}
               onChangeText={text=> this.setState({mobile_no:text})}
             />

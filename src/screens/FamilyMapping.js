@@ -24,33 +24,40 @@ export class FamilyMapping extends Component {
   }
   
   componentDidMount(){    
-      console.log(id)
+    db.transaction(function(txn) {   
+      txn.executeSql(
+        'SELECT * FROM parivaars',
+                      [],
+        function(txt,res){  
+          console.log(res.item(0)) 
+            
+        }
+      );  
+  });
  
   }
    
 	 
-	 numberUpdate = async ()=>{
-     const {mobile_no='',id}=this.state 
+	 createFamily = async ()=>{
+     const {mobile_no='',parivaar_name=''}=this.state 
       try{
-          if (mobile_no !='') {
-            db.transaction(function(txn) {  
-                console.log(mobile_no)
-                txn.executeSql(
-                  "UPDATE voters  set mobileno =? WHERE id =?",
-                  [mobile_no,id],
+          if (mobile_no !='' && parivaar_name !='') {
+            console.log(mobile_no,parivaar_name)
+            db.transaction(function(txn) {   
+                txn.executeSql('INSERT INTO parivaars (parivaar_name,mobileno) VALUES (?,?)',[parivaar_name, mobile_no],
                   function(txt,res){  
                     if(res.rowsAffected>0){
-                        alert('Updated successfully'); 
+                        alert('Create Successfully'); 
                          
                       }else{
-                        alert('Updation Failed');
+                        alert('Create Failed');
                       }   
                       
                   }
                 );  
             });  
           }else{
-              alert('Enter Mobile No')
+              alert('Enter Details')
           } 
            
       }catch(err){
@@ -65,15 +72,23 @@ export class FamilyMapping extends Component {
       <View style={styles.container}>
             <TextInput style={styles.inputBox} 
               underlineColorAndroid='rgba(0,0,0,0)' 
+              placeholder="Enter Parivaar Name"
+              placeholderTextColor = "#ffffff"
+              selectionColor="#fff" 
+              value = {this.state.parivaar_name}
+              onChangeText={text=> this.setState({parivaar_name:text})}
+            />
+            <TextInput style={styles.inputBox} 
+              underlineColorAndroid='rgba(0,0,0,0)' 
               placeholder="Enter Mobile No"
               placeholderTextColor = "#ffffff"
               selectionColor="#fff" 
+              keyboardType="numeric"
               value = {this.state.mobile_no}
               onChangeText={text=> this.setState({mobile_no:text})}
-            />
-             
+            /> 
            <TouchableOpacity style={styles.button} >
-             <Text style={styles.buttonText}  onPress={() => this.numberUpdate()}>Update</Text>
+             <Text style={styles.buttonText}  onPress={() => this.createFamily()}>Create Parivaar</Text>
            </TouchableOpacity>  
            
   		</View> 
