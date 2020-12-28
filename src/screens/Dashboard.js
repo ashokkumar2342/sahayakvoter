@@ -58,6 +58,11 @@ export class Dashboard extends Component {
        console.log('search')
         this.props.navigation.push('SearchVoter')
     }
+    familyMapping = () =>
+    { 
+      id =0;
+       this.props.navigation.push('FamilyMapping',{id:id})
+    }
 
     uninstallvapp = async ()=>{
       try {
@@ -120,10 +125,10 @@ export class Dashboard extends Component {
                             <Text style={styles.info} onPress={() => this.searchVoter}>Search Voter</Text>
                         </View>
                     </TouchableOpacity>
-                    <TouchableOpacity activeOpacity = { .5 } onPress={ this.goToProfile }> 
+                    <TouchableOpacity activeOpacity = { .5 } onPress={ this.familyMapping }> 
                         <View style={styles.menuBox}>
                             <Icon name="rocket" size={30} color="#900" /> 
-                            <Text style={styles.info} onPress={() => this.goToProfile}>Parivaar Mapping</Text>
+                            <Text style={styles.info} onPress={() => this.familyMapping}>Parivaar Map</Text>
                         </View>
                     </TouchableOpacity>
                     <TouchableOpacity activeOpacity = { .5 } onPress={ this.goToProfile }> 

@@ -211,6 +211,7 @@ export class Login extends Component {
               placeholder="Enter Password"
               secureTextEntry={true}
               placeholderTextColor = "#ffffff"
+              selectionColor="#fff"
                onChangeText={text=> this.setState({password:text})}
               />  
           

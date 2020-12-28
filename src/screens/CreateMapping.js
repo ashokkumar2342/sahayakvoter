@@ -8,7 +8,7 @@ import { openDatabase } from 'react-native-sqlite-storage';
 import Icon from 'react-native-vector-icons/FontAwesome'; 
 var db = openDatabase({ name: 'VoterDatabase.db' }); 
 
-export class FamilyMapping extends Component {
+export class CreateMapping extends Component {
     
 	constructor(props) {
     super(props);
@@ -16,9 +16,6 @@ export class FamilyMapping extends Component {
     this.state = { 
       loading: true, 
       parivaars:[],  
-      id:props.route.params.id,  
-      mobile_no:props.route.params.mobileno,  
-         
 	}; 
   }
   
@@ -109,14 +106,8 @@ export class FamilyMapping extends Component {
 	 
   render() {
     return (
-      <View style={styles.container}>
-            
-            <Button
-            onPress ={() => this.props.navigation.push('CreateMapping')}
-            title="Create Parivaar"
-            color="green"
-            accessibilityLabel="Create Parivaar"
-            />
+      <View style={styles.container}> 
+             
             <TextInput style={styles.inputBox} 
               underlineColorAndroid='rgba(0,0,0,0)' 
               placeholder="Enter Parivaar Name"
@@ -133,39 +124,16 @@ export class FamilyMapping extends Component {
               keyboardType="numeric"
               value = {this.state.mobile_no}
               onChangeText={text=> this.setState({mobile_no:text})}
-            />  
+            /> 
            <TouchableOpacity style={styles.button} >
-             <Text style={styles.buttonText}  onPress={() => this.showFamily()}>Show Parivaar</Text>
-           </TouchableOpacity>
+             <Text style={styles.buttonText}  onPress={() => this.createFamily()}>Create Parivaar</Text>
+           </TouchableOpacity>  
            <ScrollView>
            { 
             this.state.parivaars.map((itemValue,index) => { 
-               return <View style={styles.rows}> 
-               <View style={{height:50,width:150,
-                backgroundColor: 'white',
-                textAlign:'center', 
-                paddingHorizontal:16,}}>
-               <Text>{itemValue.parivaar_name}</Text>
-               </View>
-               <View style={{height:50,width:120,
-                backgroundColor: 'white',
-                textAlign:'center', 
-                paddingHorizontal:16,}}>
-               <Text>{itemValue.mobileno}</Text>
-               </View>
-               <View style={{height:50,width:60,
-                backgroundColor: 'white',
-                textAlign:'center',  
-                paddingHorizontal:16,}}>
-                <Text>
-                <TouchableOpacity>
-                    <Icon name="link" size={20} color="#32a89e"  onPress={() => this.props.navigation.navigate('MappingDetails',{id:itemValue.id,parivaar_name:itemValue.parivaar_name,mobileno:itemValue.mobileno})} />   
-                   </TouchableOpacity> 
-                </Text>
-               </View>
-
-                   
-                
+               return <View style={styles.textBox}>
+                <Text>{itemValue.parivaar_name}</Text>
+                <Text>{itemValue.mobileno}</Text> 
                 </View>
                 
             })
@@ -182,15 +150,9 @@ export class FamilyMapping extends Component {
 const styles = StyleSheet.create({
   container : {
   	backgroundColor:'#455a64',
-    flexGrow: 1, 
+    flexGrow: 1,
+    
     alignItems: 'center'
-  },
-  rowdesign : { 
-    height:50,
-    backgroundColor: 'white',
-     textAlign:'center', 
-    marginVertical: 10,
-    paddingHorizontal:16,
   },
   inputBox: {
     width:350,
@@ -237,25 +199,7 @@ const styles = StyleSheet.create({
     fontWeight:'500',
     color:'#ffffff',
     textAlign:'right'
-  },
-  rows: {
-    flex: 1,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    alignItems: 'center',
-    width:'100%',
-   
-    borderRadius: 25,
-    paddingHorizontal:16,
-    fontSize:16,
-    color:'#ffffff',
-    textAlign:'center',
-    height:50,
-    marginVertical: 10
-  },
-  col: {
-    width: '50%' // is 50% of container width
   }
 });
 
-export default FamilyMapping
+export default CreateMapping

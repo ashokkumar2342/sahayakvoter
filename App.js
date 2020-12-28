@@ -9,6 +9,8 @@ import { Profile } from './src/screens/Profile';
 import { NumberUpdate } from './src/screens/NumberUpdate';
 import { VotePoll } from './src/screens/VotePoll';
 import { FamilyMapping } from './src/screens/FamilyMapping';
+import { CreateMapping } from './src/screens/CreateMapping';
+import { MappingDetails } from './src/screens/MappingDetails';
 
 
 
@@ -51,7 +53,13 @@ function DashboardStak() {
         }} />
         <DashboardStack.Screen  name="FamilyMapping"  component={FamilyMapping} options={{ 
            title: 'Family Mapping' ,
-        }} />   
+        }} /> 
+        <DashboardStack.Screen  name="CreateMapping"  component={CreateMapping} options={{ 
+           title: 'Create Mapping' ,
+        }} /> 
+        <DashboardStack.Screen  name="MappingDetails"  component={MappingDetails} options={{ 
+           title: 'Mapping Details' ,
+        }} />  
     </DashboardStack.Navigator>
   );
 }

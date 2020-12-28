@@ -1,6 +1,6 @@
 
 import React, { Component } from 'react';
-import { View, Text ,ScrollView, TextInput,TouchableOpacity,StyleSheet,Linking,Alert,Picker,AsyncStorage} from 'react-native';
+import { View, Text ,ScrollView,Switch, TextInput,TouchableOpacity,StyleSheet,Linking,Alert,Picker,AsyncStorage} from 'react-native';
 import MySqlConnection from 'react-native-my-sql-connection';
 import Button from 'react-native-material-ui';
 import { NavigationContainer } from '@react-navigation/native';
@@ -11,7 +11,7 @@ import SmsRetriever from 'react-native-sms-retriever';
 import DeviceInfo from 'react-native-device-info';
 var db = openDatabase({ name: 'VoterDatabase.db' });
 
-export class SearchVoter extends Component {
+export class MappingDetails extends Component {
     
 	constructor(props) {
 	    super(props);
@@ -19,13 +19,52 @@ export class SearchVoter extends Component {
 		this.state = { 
         loading: true, 
         userdetails:[],  
-        
-         
+        parivaars:[],  
+        id:props.route.params.id,  
+        parivaar_name:props.route.params.parivaar_name,  
+        mobileno:props.route.params.mobileno,  
 	}; 
   }
   
   componentDidMount(){ 
+    this.parivaarShow();
   } 
+    parivaarShow =async () => {
+        var temps = []; 
+        let {id}=this.state 
+     try{
+        
+        db.transaction(function(txn) {  
+            txn.executeSql(
+                "SELECT * FROM voters  WHERE parivaar_id =?",
+                [id],
+                function(txt,res){  
+                    console.log('query Completed')
+                var len = res.rows.length;
+                var temp = [];
+                if (len > 0) {
+                    for (let i = 0; i < len; i++) {
+                        temp.push(res.rows.item(i)); 
+                    } 
+                    temps =temp;   
+                }else{
+                    alert('No record found');
+                } 
+                }
+            );  
+        });  
+        setTimeout(() => { 
+        console.log(temps)
+            this.setState({ 
+            parivaars: temps
+            })  
+        }, 100);
+         
+          
+     }catch(err){
+         
+     } 
+    }
     onPhoneNumberPressed = async () => {
     try { 
       const phoneNumber = await SmsRetriever.requestPhoneNumber();
@@ -64,9 +103,7 @@ export class SearchVoter extends Component {
                 userdetails: temps
                 }) 
                 console.log(this.state.userdetails[1])
-            }, 100);
-           
-            
+            }, 100); 
           }else{
               alert('Enter Details')
           } 
@@ -76,64 +113,45 @@ export class SearchVoter extends Component {
       }   
      
     };
-    dialCall = async (p_mobilenumber)=>{ 
-        if (Platform.OS === 'android') {
-          phoneNumber = 'tel:${'+p_mobilenumber+'}';
-        }
-        else {
-          phoneNumber = 'telprompt:${'+p_mobilenumber+'}';
-        }
-     
-        Linking.openURL(phoneNumber);
-         
-      };
-
-    sendSMS = async (p_mobilenumber)=>{
-        let phone = p_mobilenumber;
-        let body = 'Hello';
-        const sep = Platform.OS === 'ios' ? '&' : '?'
-        const url = `sms:${phone}${
-          body ? `${sep}body=${encodeURIComponent(body)}` : ''
-        }`
-        
-      if (Platform.OS === 'android') {
-        phoneNumber = 'tel:${'+p_mobilenumber+'}';
-      }
-      else {
-        phoneNumber = 'telprompt:${'+p_mobilenumber+'}';
-      }
-      Linking.openURL(url);  
+    check = async ()=>{ 
+        alert('hello')
+    }
+    isMapped = async (voterid,parivaar_id)=>{ 
+        let {id}=this.state   
+        if(parivaar_id !=0){
+            id =0;
+        }  
+        db.transaction(function(txn) {   
+            txn.executeSql(
+              "UPDATE voters  set parivaar_id =? WHERE id =?",
+              [id,voterid],
+              function(txt,res){   
+                if(res.rowsAffected>0){
+                    // alert('Updated successfully');
+                  }else{
+                    alert('Updation Failed');
+                  }   
+                  
+              }
+            );  
+        });
+        setTimeout(() => {
+            this.showDetails();  
+            this.parivaarShow();  
+        }, 100);
     };
 
-    sendWhatsapp = async (p_mobilenumber)=>{ 
-    let msg = 'type something';
-    let phoneWithCountryCode = '91'+p_mobilenumber;
-
-    let mobile = Platform.OS == 'ios' ? phoneWithCountryCode : '+' + phoneWithCountryCode;
-      if (mobile) {
-        if (msg) {
-          let url = 'whatsapp://send?text=' + msg + '&phone=' + mobile;
-          Linking.openURL(url).then((data) => {
-            console.log('WhatsApp Opened');
-          }).catch(() => {
-            alert('Make sure WhatsApp installed on your device');
-          });
-        } else {
-          alert('Please insert message to send');
-        }
-      } else {
-        alert('Please insert mobile no');
-      }
-    };
-
-  
-   
-     
-	 
   render() { 
     return (
         
-      <View style={styles.container}>
+      <View style={styles.container}> 
+            <View style={styles.textBox}>
+                {
+                    this.state.parivaars.map((itemValue,index) => {
+                        return <Text>{itemValue.name_e}</Text>
+                        })
+                } 
+            </View>             
             <TextInput style={styles.inputBox} 
               underlineColorAndroid='rgba(0,0,0,0)' 
               placeholder="Enter Name"
@@ -165,32 +183,14 @@ export class SearchVoter extends Component {
                 <Text>{itemValue.name_e}</Text>
                 <Text>{itemValue.father_name}</Text>
                 <Text>{itemValue.mobileno}</Text>
-                <Text> 
-                <TouchableOpacity>
-                     <Icon name="whatsapp" size={30} color="#34eb4c" onPress={ () => this.sendWhatsapp(itemValue.mobileno)}/> 
-                
-                </TouchableOpacity>
-               
-                   <TouchableOpacity>
-                   <Icon name="phone" size={30} color="#83eb34" onPress={() => this.dialCall(itemValue.mobileno)} style={{ marginLeft: 30 }}  />
-                   </TouchableOpacity>
-                   <TouchableOpacity>
-                    <Icon name="envelope" size={30} color="#d0eb34" onPress={() => this.sendSMS(itemValue.mobileno)} style={{ marginLeft: 30 }}  />
-                   </TouchableOpacity>
-                 
-                   <TouchableOpacity>
-                    <Icon name="edit" size={30} color="#326da8" onPress={() => this.props.navigation.navigate('NumberUpdate',{id:itemValue.id,mobileno:itemValue.mobileno})} style={{ marginLeft: 30 }}  />   
-                   </TouchableOpacity>
-                   {/* <TouchableOpacity>
-                    <Icon name="eye" size={30} color="#d0eb34"  onPress={() => this.onPhoneNumberPressed()}  style={{ marginLeft: 30 }} />   
-                   </TouchableOpacity> */}
-                   <TouchableOpacity>
-                    <Icon name="users" size={30} color="#32a89e"  onPress={() => this.props.navigation.navigate('FamilyMapping',{id:itemValue.id})}  style={{ marginLeft: 30 }} />   
-                   </TouchableOpacity>
-                   <TouchableOpacity>
-                    <Icon name="file" size={30} color="#32a89e"  onPress={() => this.props.navigation.navigate('VotePoll',{id:itemValue.id,vote_polled:itemValue.vote_polled,favour_status:itemValue.favour_status})}  style={{ marginLeft: 30 }} />   
-                   </TouchableOpacity> 
-                
+                <Text>  
+                   <Switch
+                    trackColor={{ false: "#767577", true: "#81b0ff" }}
+                    thumbColor={1 ? "#f5dd4b" : "#f4f3f4"}
+                    ios_backgroundColor="#3e3e3e"
+                    onValueChange={() => this.isMapped(itemValue.id,itemValue.parivaar_id)}
+                    value={itemValue.parivaar_id !=0 ?true:false}
+                    /> 
                 </Text>
                 
 
@@ -262,4 +262,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default SearchVoter
+export default MappingDetails
