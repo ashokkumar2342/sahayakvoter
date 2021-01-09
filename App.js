@@ -11,6 +11,9 @@ import { VotePoll } from './src/screens/VotePoll';
 import { FamilyMapping } from './src/screens/FamilyMapping';
 import { CreateMapping } from './src/screens/CreateMapping';
 import { MappingDetails } from './src/screens/MappingDetails';
+import { SahayakMapping } from './src/screens/SahayakMapping';
+import { SahayakCreateMapping } from './src/screens/SahayakCreateMapping';
+import { SahayakMappingDetails } from './src/screens/SahayakMappingDetails';
 
 
 
@@ -60,6 +63,15 @@ function DashboardStak() {
         <DashboardStack.Screen  name="MappingDetails"  component={MappingDetails} options={{ 
            title: 'Mapping Details' ,
         }} />  
+            <DashboardStack.Screen  name="SahayakMapping"  component={SahayakMapping} options={{ 
+           title: 'Sahayak Mapping' ,
+        }} /> 
+        <DashboardStack.Screen  name="SahayakCreateMapping"  component={SahayakCreateMapping} options={{ 
+           title: 'Sahayak Create Mapping' ,
+        }} /> 
+        <DashboardStack.Screen  name="SahayakMappingDetails"  component={SahayakMappingDetails} options={{ 
+           title: 'Sahayak Mapping Details' ,
+        }} /> 
     </DashboardStack.Navigator>
   );
 }

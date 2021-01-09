@@ -63,6 +63,11 @@ export class Dashboard extends Component {
       id =0;
        this.props.navigation.push('FamilyMapping',{id:id})
     }
+    sahayakMapping = () =>
+    { 
+      id =0;
+       this.props.navigation.push('SahayakMapping',{id:id})
+    }
 
     uninstallvapp = async ()=>{
       try {
@@ -127,11 +132,17 @@ export class Dashboard extends Component {
                     </TouchableOpacity>
                     <TouchableOpacity activeOpacity = { .5 } onPress={ this.familyMapping }> 
                         <View style={styles.menuBox}>
-                            <Icon name="rocket" size={30} color="#900" /> 
+                            <Icon name="users" size={30} color="#900" /> 
                             <Text style={styles.info} onPress={() => this.familyMapping}>Parivaar Map</Text>
                         </View>
                     </TouchableOpacity>
-                    <TouchableOpacity activeOpacity = { .5 } onPress={ this.goToProfile }> 
+                    <TouchableOpacity activeOpacity = { .5 } onPress={ this.sahayakMapping }> 
+                        <View style={styles.menuBox}>
+                            <Icon name="user" size={30} color="#900" /> 
+                            <Text style={styles.info} onPress={() => this.sahayakMapping}>Sahayak Map</Text>
+                        </View>
+                    </TouchableOpacity>
+                    {/* <TouchableOpacity activeOpacity = { .5 } onPress={ this.goToProfile }> 
                         <View style={styles.menuBox}>
                             <Icon name="rocket" size={30} color="#900" /> 
                             <Text style={styles.info} onPress={() => this.goToProfile}>Profile</Text>
@@ -142,16 +153,10 @@ export class Dashboard extends Component {
                             <Icon name="rocket" size={30} color="#900" /> 
                             <Text style={styles.info} onPress={() => this.goToProfile}>Profile</Text>
                         </View>
-                    </TouchableOpacity>
-                    <TouchableOpacity activeOpacity = { .5 } onPress={ this.goToProfile }> 
-                        <View style={styles.menuBox}>
-                            <Icon name="rocket" size={30} color="#900" /> 
-                            <Text style={styles.info} onPress={() => this.goToProfile}>Profile</Text>
-                        </View>
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                     <TouchableOpacity activeOpacity = { .5 } onPress={ this.uninstallvapp }> 
                         <View style={styles.menuBox}>
-                            <Icon name="rocket" size={30} color="#900" /> 
+                            <Icon name="trash" size={30} color="#900" /> 
                             <Text style={styles.info} onPress={() => this.uninstallvapp}>Uninstall</Text>
                         </View>
                     </TouchableOpacity>

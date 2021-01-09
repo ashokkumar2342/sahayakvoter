@@ -17,7 +17,7 @@ export class SearchVoter extends Component {
 	    super(props);
 	    this.state = { text: 'Useless Placeholder' }; 
 		this.state = { 
-        loading: true, 
+        loading: false, 
         userdetails:[],  
         
          
@@ -36,6 +36,9 @@ export class SearchVoter extends Component {
     }
    };
 	 showDetails = async ()=>{
+    this.setState({
+      loading: !this.state.loading,
+     });
      const {name='',father_name='',serial_number=''}=this.state  
      var temps = []; 
       try{
@@ -61,6 +64,7 @@ export class SearchVoter extends Component {
             });  
             setTimeout(() => { 
                  this.setState({ 
+                loading:false,   
                 userdetails: temps
                 }) 
                 console.log(this.state.userdetails[1])

@@ -11,7 +11,7 @@ import SmsRetriever from 'react-native-sms-retriever';
 import DeviceInfo from 'react-native-device-info';
 var db = openDatabase({ name: 'VoterDatabase.db' });
 
-export class MappingDetails extends Component {
+export class SahayakMappingDetails extends Component {
     
 	constructor(props) {
 	    super(props);
@@ -19,24 +19,23 @@ export class MappingDetails extends Component {
 		this.state = { 
         loading: true, 
         userdetails:[],  
-        parivaars:[],  
-        id:props.route.params.id,  
-        parivaar_name:props.route.params.parivaar_name,  
+        sahshayaks:[],  
+        id:props.route.params.id,
         mobileno:props.route.params.mobileno,  
 	}; 
   }
   
   componentDidMount(){ 
-    this.parivaarShow();
+    this.sahshayakshow();
   } 
-    parivaarShow =async () => {
+    sahshayakshow =async () => {
         var temps = []; 
         let {id}=this.state 
      try{
         
         db.transaction(function(txn) {  
             txn.executeSql(
-                "SELECT * FROM voters  WHERE parivaar_id =?",
+                "SELECT * FROM voters  WHERE sah_sahayak_id =?",
                 [id],
                 function(txt,res){  
                     console.log('query Completed')
@@ -56,7 +55,7 @@ export class MappingDetails extends Component {
         setTimeout(() => { 
         console.log(temps)
             this.setState({ 
-            parivaars: temps
+            sahshayaks: temps
             })  
         }, 100);
          
@@ -93,7 +92,7 @@ export class MappingDetails extends Component {
                         } 
                         temps =temp;   
                     }else{
-                        alert('No record found');
+                        console.log('No record found');
                     } 
                   }
                 );  
@@ -113,17 +112,15 @@ export class MappingDetails extends Component {
       }   
      
     };
-    check = async ()=>{ 
-        alert('hello')
-    }
-    isMapped = async (voterid,parivaar_id)=>{ 
+   
+    isMapped = async (voterid,sah_sahayak_id)=>{ 
         let {id}=this.state   
-        if(parivaar_id !=0){
+        if(sah_sahayak_id !=0){
             id =0;
         }  
         db.transaction(function(txn) {   
             txn.executeSql(
-              "UPDATE voters  set parivaar_id =? WHERE id =?",
+              "UPDATE voters  set sah_sahayak_id =? WHERE id =?",
               [id,voterid],
               function(txt,res){   
                 if(res.rowsAffected>0){
@@ -137,7 +134,7 @@ export class MappingDetails extends Component {
         });
         setTimeout(() => {
             this.showDetails();  
-            this.parivaarShow();  
+            this.sahshayakshow();  
         }, 100);
     };
 
@@ -147,7 +144,7 @@ export class MappingDetails extends Component {
       <View style={styles.container}> 
             <View style={styles.textBox}>
                 {
-                    this.state.parivaars.map((itemValue,index) => {
+                    this.state.sahshayaks.map((itemValue,index) => {
                         return <Text>{index+1}. {itemValue.name_e}</Text>
                         })
                 } 
@@ -188,8 +185,8 @@ export class MappingDetails extends Component {
                     trackColor={{ false: "#767577", true: "#81b0ff" }}
                     thumbColor={1 ? "#f5dd4b" : "#f4f3f4"}
                     ios_backgroundColor="#3e3e3e"
-                    onValueChange={() => this.isMapped(itemValue.id,itemValue.parivaar_id)}
-                    value={itemValue.parivaar_id !=0 ?true:false}
+                    onValueChange={() => this.isMapped(itemValue.id,itemValue.sah_sahayak_id)}
+                    value={itemValue.sah_sahayak_id !=0 ?true:false}
                     /> 
                 </Text>
                 
@@ -262,4 +259,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default MappingDetails
+export default SahayakMappingDetails

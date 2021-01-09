@@ -1,7 +1,9 @@
-
 import React, { Component } from 'react';
 import { View, Text , TextInput,TouchableOpacity,StyleSheet,Alert,Picker,AsyncStorage} from 'react-native';
 import MySqlConnection from 'react-native-my-sql-connection';
+import Icon from 'react-native-vector-icons/FontAwesome'; 
+import SmsRetriever from 'react-native-sms-retriever';
+import Spinner from 'react-native-loading-spinner-overlay';
 import Button from 'react-native-material-ui';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack'; 
@@ -20,26 +22,28 @@ export class Login extends Component {
 	   this.state = { text: 'Useless Placeholder' };
 		
 		this.state = { 
-      loading: true,
-      userId:'',
-      rootUrl:'',
-      userdetails:[],  
-      booth:[],      
-      options:[],
-      setSelectedValue:'', 
-	}; 
+		loading: false,
+		userId:'',
+		rootUrl:'',
+		userdetails:[],  
+		booth:[],      
+		options:[],
+		setSelectedValue:'', 
+		setSelectedMobile:'Select Mobile No', 
+		}; 
   }
   
-  componentDidMount(){     
-    let check ='';
-    db.transaction(function(txn) {  
-              txn.executeSql(
-                'SELECT count(*) as total FROM voters',
-                [],
-                function(txt,res){ 
-                    check= res.rows.item(0).total 
-                }
-              ); 
+  componentDidMount(){  
+	let check ='';
+	
+    db.transaction(function(txn) {   		
+		txn.executeSql(
+		'SELECT count(*) as total FROM voters',
+		[],
+		function(txt,res){ 
+			check= res.rows.item(0).total 
+		}
+		); 
         
       }); 
     setTimeout(() => { 
@@ -61,6 +65,9 @@ export class Login extends Component {
         })
     } 
 	 checkLogin = async ()=>{
+		this.setState({
+			loading: !this.state.loading,
+		  });
      const {mobile_no,password}=this.state  
       
       try{
@@ -68,7 +75,10 @@ export class Login extends Component {
           let userdetails = await connection.executeQuery("SELECT id,d_code,b_code,v_code,max_sahayak FROM app_users WHERE mobile_no = '"+mobile_no+"' AND  password = '"+password+"' AND  status = 1 LIMIT 1");
    
           if (userdetails.length == 0) {
-            alert("Invalid Mobile and Password")
+			alert("Invalid Mobile and Password")
+			this.setState({
+				loading: false, 
+			})  
           }else{
             let sahayak_list = await connection.executeQuery("select count(*) as already_sahayak from sahayak_list where app_user_id = '"+userdetails[0].id+"'");
             
@@ -96,12 +106,12 @@ export class Login extends Component {
      }
      configureData = async ()=>{  
          try {
+			
             const connection = await MySqlConnection.createConnection(config);
-            
+			let selfNumber = this.state.setSelectedMobile;
+			console.log(selfNumber);
             let boothdetails = await connection.executeQuery("SELECT * FROM booths WHERE id = '"+this.state.setSelectedValue+"' LIMIT 1"); 
            
-            // let insert = await connection.executeQuery("INSERT INTO sahayak_list (app_user_id, mobile_no, d_code, b_code, v_code, booth_no) values (1, 1234567890, d1, b1, v1, b1)");
-            // console.log(insert[0])
             if (boothdetails.length == 0) {
                 alert("Invalid Booth")
             }else{
@@ -111,12 +121,12 @@ export class Login extends Component {
                     txn.executeSql(
                       "SELECT name FROM sqlite_master WHERE type='table' AND name='voters'",
                       [],
-                      function(tx, res) {
-                          txn.executeSql('DROP TABLE IF EXISTS voters', []);
+                      function(tx, res) { 
+							txn.executeSql('DROP TABLE IF EXISTS voters', []);
                           txn.executeSql(
                             'CREATE TABLE IF NOT EXISTS voters(id INTEGER PRIMARY KEY AUTOINCREMENT, name_e TEXT, father_name TEXT, age INTEGER, wardno INTEGER, booth_no TEXT, srno INTEGER, epicno TEXT, favour_status INTEGER, vote_polled INTEGER, mobileno TEXT, parivaar_id INTEGER, sah_sahayak_id INTEGER)',
                             []
-                          );
+							);
                           txn.executeSql(
                             'CREATE TABLE IF NOT EXISTS booths(boothno TEXT, booth_name TEXT)',
                             []
@@ -136,21 +146,22 @@ export class Login extends Component {
                           txn.executeSql(
                             'CREATE TABLE appuserdetail (boothno TEXT, mobileno TEXT)',
                             []
-                          );
-
+                          ); 
                           txn.executeSql(
-                            "INSERT INTO appuserdetail (boothno, mobileno) VALUES ('"+boothdetails[0].booth_no+"','1234567890')",
-                            [],
-                          );
-
+                            "INSERT INTO appuserdetail (boothno, mobileno) VALUES (?,?)",
+                            [boothdetails[0].booth_no,selfNumber],
+                          ); 
                           voters.map((itemValue,index) => {  
+                            
+                          console.log(itemValue.name_e)
                             txn.executeSql(
                                 'INSERT INTO voters (name_e, father_name, age, wardno, booth_no, srno, epicno, mobileno, favour_status, vote_polled, parivaar_id, sah_sahayak_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)',
                                 [itemValue.name_e, itemValue.fname_e, itemValue.age,itemValue.v_ward,itemValue.booth_no,itemValue.srno,itemValue.card_no,itemValue.mobile_no,0,0,0,0],
                                 (tx, results) => {
+                                  console.log(results)
                                   console.log('Insert Results',results.rowsAffected);
                                   if(results.rowsAffected>0){
-                                    console.log('Creaded Successfully'); 
+                                    console.log('Creaded Successfully Voters'); 
                                   }else{
                                     console.log('Updation Failed');
                                   }
@@ -178,22 +189,37 @@ export class Login extends Component {
                     
                   });
                   
-                  let sahayak_insert = await connection.executeQuery(" call up_instal_sahayak("+this.state.userdetails.id+", '1234567890', '"+this.state.userdetails.d_code+"', '"+this.state.userdetails.b_code+"', '"+this.state.userdetails.v_code+"', '"+boothdetails[0].booth_no+"');");
+                  let sahayak_insert = await connection.executeQuery(" call up_instal_sahayak("+this.state.userdetails.id+", '"+this.state.setSelectedMobile+"', '"+this.state.userdetails.d_code+"', '"+this.state.userdetails.b_code+"', '"+this.state.userdetails.v_code+"', '"+boothdetails[0].booth_no+"');");
 
                 
             }
             
          } catch (error) {
-             
+             console.log(error)
          }
          
     
-      this.props.navigation.navigate('Dashboard');
+	  this.props.navigation.navigate('Dashboard');
+	  
     //   navigation.navigate('Dashboard')
     
 
           
-     } 
+	 } 
+	 onPhoneNumberPressed = async () => {
+		try { 
+		  const phoneNumber = await SmsRetriever.requestPhoneNumber(); 
+		 var number = phoneNumber.replace(/\D/g, '').slice(-10);
+		 console.log(number)
+		  this.setState({
+			loading: false,
+			setSelectedMobile: number
+		})   
+		 
+		} catch (error) {
+		  console.log(JSON.stringify(error));
+		}
+	   };
 	 
   render() {
     return (
@@ -214,6 +240,10 @@ export class Login extends Component {
               selectionColor="#fff"
                onChangeText={text=> this.setState({password:text})}
               />  
+			<TouchableOpacity style={styles.buttonInput} >
+             <Text style={styles.buttonTextInput}  onPress={() => this.onPhoneNumberPressed()}>{this.state.setSelectedMobile}</Text>
+             
+           	</TouchableOpacity> 
           
            <TouchableOpacity style={styles.button} >
              <Text style={styles.buttonText}  onPress={() => this.checkLogin()}>Show Booth</Text>
@@ -225,8 +255,10 @@ export class Login extends Component {
            </TouchableOpacity>   
         
             <Picker 
-                style={{ height: 50, width: 160,margin:10, borderColor: 'red', 
-                borderWidth: 1,}} 
+                style={{ height: 50, width: 300,margin:10, borderColor: '#fff', 
+				borderWidth: 1,color:'#fff',
+				
+				}} 
                 selectedValue={this.state.setSelectedValue}
                 onValueChange={(itemValue) => this.setOptionValue(itemValue)}
                 >
@@ -235,11 +267,16 @@ export class Login extends Component {
                     return <Picker.Item key={itemValue.id} value={itemValue.id} label={itemValue.b_name} />;
                     })
                 } 
-                </Picker> 
+            </Picker> 
             <TouchableOpacity style={styles.button} >
              <Text style={styles.buttonText}  onPress={() => this.configureData()}>Configure Data</Text>
              
            </TouchableOpacity>  
+		   <Spinner
+			visible={this.state.loading}
+			textContent={'Data is Loading...'}
+			textStyle={styles.SpinnerText}
+			/>
   		</View>
 
     )
@@ -272,6 +309,21 @@ const styles = StyleSheet.create({
       marginVertical: 10,
       paddingVertical: 13
   }, 
+  buttonInput: {
+    width:300,
+    backgroundColor:'rgba(255, 255,255,0.2)',
+     borderRadius: 25,
+      marginVertical: 10,
+	  paddingVertical: 13,
+	  color:'#ffffff',
+  },
+  buttonTextInput: {
+    fontSize:16,
+    fontWeight:'500',
+    color:'#ffffff',
+	textAlign:'left',
+	marginLeft: 20,
+  },
   buttonText: {
     fontSize:16,
     fontWeight:'500',
